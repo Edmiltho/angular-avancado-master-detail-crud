@@ -1,0 +1,356 @@
+https://github.com/costanonato/angular-avancado-master-detail-crud/blob/master/src/app/shared/services/base-resource.service.ts
+
+CURSO ANGULAR MASTER/DETAIL
+17/05/2022
+Aulas 23-26
+TOASTR component
+adicionar script e style no angular.json
+
+em tsconfig.json, adicionar em compilerOptions:
+"allowSyntheticDefaultImports": true,
+
+no arquivo component
+import toastr from 'toastr'
+
+// ou //
+import * as toastr from 'toastr'
+
+ROTAS
+//redirect/reload component page
+this.router.navigateByUrl('categories', {skipLocationChange: true}).then(
+      () => this.router.navigate(['categories',category.id, 'edit']) //Array com partes da rota a serem navegadas
+    )
+
+//ERRO Property 'required' comes from an index signature, so it must be accessed with ['required'].ngtsc(4111)//
+mudar "noPropertyAccessFromIndexSignature" em tsconfig para false
+
+Problema em editar categorias, não estão atualizando.
+
+18/05/2022
+CURSO ANGULAR MASTER/DETAIL
+Aulas 27 a 37
+
+Reutilização de códigos de formulário, model e service.
+
+uso do primeng calendar
+
+form-control do bootstrap
+<select name="type" id="type" formControlName="type" class="form-control">
+            <option value="expanse">Despesa</option>
+            <option value="revenue">Receita</option>
+			<!--adiciona o resto das opções-->
+          </select>
+		  
+Recurso do bootstrap para exibir uma referência
+Neste caso forma um texto contendo um R$
+<div class="input-group-prepend">
+	 <div class="input-group-text">R$</div>
+</div>
+
+MÁSCARA DE TEXTO EXEMPLO
+import no entry module
+import { IMaskModule } from 'angular-imask';
+
+HTML
+<input [imask]="imaskConfig" type="text" class="form-control text-right" id="amount" formControlName="amount">
+
+TYPESCRIPT
+ imaskConfig = {
+    mask: Number,
+    scale: 2,
+    thousandsSeparator: '',
+    padFractionalZeros: true,
+    normalizeZeros: true,
+    radix: ','
+  }
+  
+ 
+ 
+ 19/05/2022
+ CURSO ANGULAR MASTER/DETAIL
+ Aulas 38 a 46
+ 
+ class extends, super
+  
+  //Erro ao tentar passar o id dentro da categoria, o programa não reconhece o id como number
+  return this.categoryService.getByid(entry.categoryId).pipe(
+      flatMap(category => {
+        entry.category = category;
+		
+//A solução foi criar uma variável id e passar o conteúdo do categoryId para dentro dela, assim ela é reconhecida como number
+return this.categoryService.getByid({id:entry.categoryId}).pipe(
+      flatMap(category => {
+        entry.category = category;
+
+Conceitos
+-Módulo compartilhado: extrair partes do sistema que podem ou não ser utilizados por algum outro componenete principal, compartilhados pelos projeto.
+Ex: components, directives, models, pipes
+Reduzir o tamanho do app.module
+
+-Módulo core: componentes, models, serviços, guards, partes do projeto que são obrigatórios para o funcionamento do sistema.
+Ex: components, guards,services
+Remover repetições desnecessárias
+
+CLASSES ABSTRATAS: não podem ser instanciadas, elas servem apenas de base.
+
+Generics: forma de trabalhar com classe ou método de forma genérica e flexível. Passar um tipo para dentro da classe e através desse tipo você consegue indicar o que tem que ser retornado
+
+protected: torna o método ou atributo visível apenas dentro da classe base e das classes que herdarem a classe base
+
+HttpClient: o serviço http é fornecido pelo angular como um objeto único, uma única instância. Conceito de objetos singleton. o padrão é utilizar a mesma instância http em todas as classes e serviços.
+
+Singleton: objeto cuja única instância é utilizada por todas a aplicação
+
+>>Trabalhando com injetor: Ex do curso: A própria classe dentro do BaseResource pede pro angular uma instância do http e atribui no constructor, sem a necessidar de pegar da classe que está herdando do Base.
+
+20/05/2022
+CURSO ANGULAR MASTER/DETAIL
+Aula 48
+
+Em vem vez fazer um cast, instanciar um elemento no modulo service base.
+A solução é pedir para toda classe que for herdar da classe base, passar pra ela um método que converte o json pra um objeto.
+Pssar o nome da função sem (), não executa a função. Nesse caso, estamos apenas dizendo que é essa função que deverá ser executada quando for solicitado.
+fromJson armazena os comandos que serão executados dentro de um objeto.
+
+Diferença entre angular.fromJson e JSON.parse: "The difference is that angular.fromJson parses and returns input data only in case its type is a string. Otherwise is returns input."
+/**
+ * @ngdoc function
+ * @name angular.fromJson
+ * @module ng
+ * @kind function
+ *
+ * @description
+ * Deserializes a JSON string.
+ *
+ * @param {string} json JSON string to deserialize.
+ * @returns {Object|Array|string|number} Deserialized JSON string.
+ */
+function fromJson(json) {
+  return isString(json)
+      ? JSON.parse(json)
+      : json;
+}
+
+Link contendo explicações de passar contexto como parâmetro: https://www.typescriptlang.org/docs/handbook/functions.html verificar a documentação do 'this'
+
+23/05/2022
+ROUTES
+https://angular.io/start/start-routing
+
+The RouterLink directive helps you customize the anchor element. In this case, the route, or URL, contains one fixed segment, /products. The final segment is variable, inserting the id property of the current product. For example, the URL for a product with an id of 1 would be similar to https://getting-started-myfork.stackblitz.io/products/1.
+
+The route parameters correspond to the path variables you define in the route. To access the route parameters, we use route.snapshot, which is the ActivatedRouteSnapshot that contains information about the active route at that particular moment in time. The URL that matches the route provides the productId . Angular uses the productId to display the details for each unique product.
+
+<h1>Angular Router App</h1>
+<!-- This nav gives you links to click, which tells the router which route to use (defined in the routes constant in  AppRoutingModule) -->
+<nav>
+  <ul>
+    <li><a routerLink="/first-component" routerLinkActive="active">First Component</a></li>
+    <li><a routerLink="/second-component" routerLinkActive="active">Second Component</a></li>
+  </ul>
+</nav>
+<!-- The routed views render in the <router-outlet>-->
+<router-outlet></router-outlet>
+
+Using relative paths
+Relative paths let you define paths that are relative to the current URL segment. The following example shows a relative route to another component, second-component. FirstComponent and SecondComponent are at the same level in the tree, however, the link to SecondComponent is situated within the FirstComponent, meaning that the router has to go up a level and then into the second directory to find the SecondComponent. Rather than writing out the whole path to get to SecondComponent, use the ../ notation to go up a level.
+
+Lazy Loading - https://angular.io/guide/lazy-loading-ngmodules
+
+24/05/2022
+CURSO ANGULAR MASTER/DETAIL
+Aulas 49 a 52
+
+RxJS OBSERVABLE
+https://medium.com/tableless/entendendo-rxjs-observable-com-angular-6f607a9a6a00
+
+return this.categoryService.getByid(entry.categoryId).pipe(
+      flatMap(category => {
+        entry.category = category;
+        return super.update(entry)
+      })
+    );
+	
+25/05/2022
+CURSO ANGULAR MASTER/DETAIL
+Aulas 52 a 61
+ngClass - passa dinamicamente uma variavel ou propriedade que vai ser a string contendo a classe que vai ser adicionada no link
+<a routerLink="/entries" class="btn" [ngClass]="buttonClass">
+      << {{buttonText}}
+    </a>
+	
+Angular FormControl - https://angular.io/api/forms/FormControl
+
+26/05/2022
+Aulas 62 a 69
+CURSO ANGULAR MASTER/DETAIL
+Finalização da seção 3
+
+div.card-deck : Div que enfileira as colunas na vertical. Distribue em fileira.
+
+--------------------------------------------------------------------------------------------------------
+30/05/2022
+
+Construção do ambiente de trabalho crm-mitis no vscode
+Estudo do módulo e código
+
+1 - npm i
+2 - npm run build-serve
+
+Bases de teste
+crm normal : bdcrmdemodev
+corretora : bdcrmdemodevmaissaude
+
+--------------------------------------------------------------------------------------------------------
+31/05/2022
+
+Problema npm install lento
+
+procura de soluções
+
+"Using following commands to uninstall :
+
+npm uninstall -g @angular/cli
+npm cache clean --force
+
+To verify: ng --version /* You will get the error message, then u have uninstalled */
+
+Using following commands to re-install :
+
+npm install -g @angular/cli
+
+Notes : - Using --force for clean all the caches - On Windows run this using administrator - On Mac use sudo ($ sudo <command>)
+
+If you are using npm>5 you may need to use cache verify instead. ($ npm cache verify)"
+
+"I had a problem installing npm packages today too. It would hang always. I ended up running. npm config set registry http://registry.npmjs.org/
+
+By default the registry is set to https, which seems to be causing weird problems. I'm using CentOS 7.2 "
+
+
+"By disabling the npm install progress bar during downloads, you can significantly cut down on download times. I've experienced up to two times (50%) faster download many times & on average one-third (30%) faster download times.
+
+npm set progress=false "
+
+Erro na instalação npm
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: 'morris.js@0.5.0',
+npm WARN EBADENGINE   required: { node: '>=0.8 <0.11' },
+npm WARN EBADENGINE   current: { node: 'v14.17.0', npm: '8.11.0' }
+npm WARN EBADENGINE }
+npm notice Beginning October 4, 2021, all connections to the npm registry - including for package installation - must use TLS 1.2 or higher. You are currently using plaintext http to connect. Please visit the GitHub blog for more information: https://github.blog/2021-08-23-npm-registry-deprecating-tls-1-0-tls-1-1/
+npm notice Beginning October 4, 2021, all connections to the npm registry - including for package installation - must use TLS 1.2 or higher. You are currently using plaintexnpm ERR! errno UNABLE_TO_GET_ISSUER_CERT_LOCALLY
+npm ERR! request to https://registry.npmjs.org/webpack-sources/-/webpack-sources-1.2.0.tgz failed, reason: unable to get local issuer certificate
+
+npm ERR! A complete log of this run can be found in:
+npm ERR!     C:\Users\MITIS\AppData\Local\npm-cache\_logs\2022-05-31T13_12_03_699Z-debug-0.log
+
+Após isso usei os comandos:
+Changing the registry to http instead of https: npm config set registry http://registry.npmjs.org/
+
+comandos testados
+
+npm set strict-ssl=false 
+
+npm config set registry http://registry.npmjs.org/
+
+set NODE_TLS_REJECT_UNAUTHORIZED=0
+
+npm WARN old lockfile FetchError: request to https://registry.npmjs.org/which-module failed, reason: unable to get local issuer certificate
+npm WARN old lockfile     at ClientRequest.<anonymous> (C:\Users\MITIS\AppData\Roaming\npm\node_modules\npm\node_modules\minipass-fetch\lib\index.js:130:14)
+npm WARN old lockfile     at ClientRequest.emit (events.js:376:20)
+npm WARN old lockfile     at TLSSocket.socketErrorListener (_http_client.js:475:9)
+npm WARN old lockfile     at TLSSocket.emit (events.js:388:22)
+npm WARN old lockfile     at emitErrorNT (internal/streams/destroy.js:106:8)
+npm WARN old lockfile     at emitErrorCloseNT (internal/streams/destroy.js:74:3)
+npm WARN old lockfile     at processTicksAndRejections (internal/process/task_queues.js:82:21)
+npm WARN old lockfile  Could not fetch metadata for which-module@2.0.0 FetchError: request to https://registry.npmjs.org/which-module failed, reason: unable to get local issuer certificate
+npm WARN old lockfile     at ClientRequest.<anonymous> (C:\Users\MITIS\AppData\Roaming\npm\node_modules\npm\node_modules\minipass-fetch\lib\index.js:130:14)
+npm WARN old lockfile     at ClientRequest.emit (events.js:376:20)
+npm WARN old lockfile     at TLSSocket.socketErrorListener (_http_client.js:475:9)
+npm WARN old lockfile     at TLSSocket.emit (events.js:388:22)
+npm WARN old lockfile     at emitErrorNT (internal/streams/destroy.js:106:8)
+npm WARN old lockfile     at emitErrorCloseNT (internal/streams/destroy.js:74:3)
+npm WARN old lockfile     at processTicksAndRejections (internal/process/task_queues.js:82:21) {
+npm WARN old lockfile   code: 'UNABLE_TO_GET_ISSUER_CERT_LOCALLY',
+npm WARN old lockfile   errno: 'UNABLE_TO_GET_ISSUER_CERT_LOCALLY',
+npm WARN old lockfile   type: 'system'
+npm WARN old lockfile }
+
+--------------------------------------------------------------------------------------------------------
+
+01/06/2022
+
+Reverter pasta crm-mitis
+node atual 14.17
+npm 8.x
+
+Mudar para as versões
+npm: 7.23
+node: 16.14
+angular cli: 13.2.3
+
+-Desinstalação completa do node e npm
+Instalação node 14.17
+
+O erro de certificado continua
+npm WARN old lockfile   code: 'UNABLE_TO_GET_ISSUER_CERT_LOCALLY',
+npm WARN old lockfile   errno: 'UNABLE_TO_GET_ISSUER_CERT_LOCALLY',
+
+Tentativa de rodar pelo cmd usando o comando npm i --force
+Início: 10:50
+Final:
+
+Testar config certificado
+https://stackoverflow.com/questions/13913941/how-to-fix-ssl-certificate-error-when-running-npm-on-windows
+npm config set cafile /path/to/your/cert.pem
+
+npm config set cafile "/path/to/CA.crt"
+
+# Windows/MacOS/Linux 
+npm config set cafile "<path to your certificate file>"
+
+# Check the 'cafile'
+npm config get cafile
+
+https://stackoverflow.com/questions/36494336/npm-install-error-unable-to-get-local-issuer-certificate
+
+https://stackoverflow.com/questions/13913941/how-to-fix-ssl-certificate-error-when-running-npm-on-windows
+
+Tentei entrar em opções de internet>conteudo>certificados e verificar, exportei o certificado MITIS e converti para pem, e configurei como cafile no git bash, porém o erro continua.
+
+--------------------------------------------------------------------------------------------------------
+
+02/06/2022
+
+Criação de novo usuário para teste
+
+Rodando comandos npm no usuário teste
+
+npm i npm@7.23.0
+npm notice
+npm notice New minor version of npm available! 8.3.1 -> 8.12.0
+npm notice Changelog: <https://github.com/npm/cli/releases/tag/v8.12.0>
+npm notice Run `npm install -g npm@8.12.0` to update!
+npm notice
+npm ERR! code ERR_SSL_DECRYPTION_FAILED_OR_BAD_RECORD_MAC
+npm ERR! errno ERR_SSL_DECRYPTION_FAILED_OR_BAD_RECORD_MAC
+npm ERR! Invalid response body while trying to fetch https://registry.npmjs.org/npm: 13340:error:1408F119:SSL routines:ssl3_get_record:decryption failed or bad record mac:c:\ws\deps\openssl\openssl\ssl\record\ssl3_record.c:677:
+npm ERR!
+
+npm ERR! A complete log of this run can be found in:
+npm ERR!     C:\Users\teste\AppData\Local\npm-cache\_logs\2022-06-02T13_07_43_352Z-debug-0.log
+
+
+npm config set ca=""
+
+$ npm i npm@7.23.0
+npm ERR! code UNABLE_TO_GET_ISSUER_CERT_LOCALLY
+npm ERR! errno UNABLE_TO_GET_ISSUER_CERT_LOCALLY
+npm ERR! request to https://registry.npmjs.org/npm/-/npm-7.23.0.tgz failed, reason: unable to get local issuer certificate
+
+npm ERR! A complete log of this run can be found in:
+npm ERR!     C:\Users\teste\AppData\Local\npm-cache\_logs\2022-06-02T13_11_05_507Z-debug-0.log
+
+Testando node 14.16 erro
+Testando node 14.15 erro
